@@ -122,7 +122,7 @@ router.post('/login', (req, res) => {
 })
 
 router.post('/logout', (req, res) => {
-    res.cookie('jwt', "", {maxAge : 1})
+    res.cookie('jwt', "", { maxAge: 1 })
 })
 
 module.exports = router;

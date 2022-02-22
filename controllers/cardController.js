@@ -2,7 +2,9 @@ const cartRepository = require('../repository/repository');
 const Produits = require('../models/Product');
 const Order = require('../models/Order');
 const Stripe = require('stripe');
-const stripe = Stripe('sk_test_51Jh9HIHGbiSpfczpx1KTKrLDJBPr6VUXoEoI5ywu9YJPecTi6Asc9ieYbjuusVfoo5WNfmTwFmAhv6qdrxyfTDuo00ZhM4zCrB');
+const { v4: uuidv4 } = require('uuid');
+const { calculateAmount } = require('../utils/manageAmount');
+const stripe = Stripe('sk_test_51JHVCtF05VKCAD6XLDKnfvfTnl4WzXg9vzGG82TuZzaUTrLzJfzCgUTC6z0eBQGsZtwg6DGMRulSJLj3OqYjwuEX0002PVqevl');
 
 exports.addItemToCart = async (req, res) => {
     const {
@@ -188,32 +190,30 @@ exports.removeItem = async (req, res) => {
 }
 
 exports.confirmPayment = async (req, res) => {
-    const { amount, id, user_email, cart_id } = req.body;
-    console.log(user_email);
-    try {
-        const payment = await stripe.paymentIntents.create({
-            amount,
-            currency: "XAF",
-            description: "SNKRS",
-            payment_method: id,
-            receipt_email: user_email,
-            confirm: true
-        })
-        // Store Order
-        const order = await Order.create({
-            id_cart: cart_id,
-            paid: true
-        });
+    const { token, panel } = req.body
+    const amount = calculateAmount(panel)
+    const session = await stripe.checkout.sessions.create({
+        payment_method_types: ["card"],
+        line_items: [
+            {
+                price_data: {
+                    currency: "eur",
+                    product: {
+                        name: panel.productId
+                    },
+                    unit_amount: (amount * 100) / 10,
+                },
+                quantity: 10,
+            },
+        ],
+        mode: "payment",
+        success_url: `https://www.google.com`,
+        cancel_url: `https://www.youtube.com`,
+    });
 
-        res.json({
-            message: "Payment successful",
-            success: true
-        })
-    } catch (error) {
-        console.log("Error: ", error);
-        res.json({
-            message: "Payment failed",
-            success: false
-        })
-    }
-}
+    res.json({ id: session.id });
+};
+
+exports.confirmPayment = async (req, res) => {
+    res.status(200).json({success : true})
+};

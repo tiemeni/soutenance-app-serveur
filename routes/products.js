@@ -11,19 +11,16 @@ router.post('/', async (req, res) => {
         image_url,
         small_image_url,
         couleur_dispo,
-        taille_dispo,
         prix_unitaire,
         category,
         description,
         qte_stock,
         description_img1,
         description_img2,
-        description_img3,
-        description_img4,
-        description_img5,
-        description_img6 } = req.body;
-
-    if (nom_produit == null || brand_name == null || image_url == null || couleur_dispo == null || taille_dispo == null || prix_unitaire == null) {
+        description_img3
+     } = req.body;
+    
+    if (nom_produit == null || brand_name == null || image_url == null || couleur_dispo == null || prix_unitaire == null) {
         return res.status(400).json({ error: "Missing parameters." });
     }
 
@@ -36,17 +33,15 @@ router.post('/', async (req, res) => {
                     nom_produit: nom_produit,
                     brand_name: brand_name,
                     image_url: image_url,
+                    small_image_url,
+                    qte_stock,
                     couleur_dispo: couleur_dispo,
-                    taille_dispo: taille_dispo,
                     prix_unitaire: prix_unitaire,
                     category: category,
                     description: description,
                     description_img1: description_img1,
                     description_img2: description_img2,
-                    description_img3: description_img3,
-                    description_img4: description_img4,
-                    description_img5: description_img5,
-                    description_img6: description_img6,
+                    description_img3: description_img3
                 });
 
                 return res.status(201).json({
@@ -107,4 +102,32 @@ router.delete('/:id_produit', async (req, res) => {
     }
 });
 
+router.put('/:id', async (req, res) => {
+    const {prix_unitaire, qte_stock, category} = req.body
+    const id = req.params.id
+    if(prix_unitaire&&qte_stock&&category){
+        try{
+            Product.findByIdAndUpdate({ _id : id}, {
+                $set : {
+                    prix_unitaire,
+                    qte_stock,
+                    category
+                }
+            }, {
+                new : true
+            }, (err, data) => {
+                if(err){
+                    console.log(err)
+                    res.status(400).json({err : 'une erreur s\'est produite'})
+                }else{
+                    res.status(200).json({success : true})
+                }
+            })
+        }catch(e){
+            console.log(e)
+        }
+    }else{
+        res.status(300).json({err : 'données vides'})
+    }
+})
 module.exports = router;

@@ -1,9 +1,8 @@
 const mongoose = require('mongoose')
 
 const orderSchema = mongoose.Schema({
-    id_cart: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Carts",
+    user_id: {
+        type: mongoose.Schema.Types.ObjectId
     },
     delivery_date: {
         type: Date

@@ -24,7 +24,7 @@ const productSchema = mongoose.Schema({
     },
     taille_dispo: {
         type: String,
-        required: true,
+        required: false,
     },
     prix_unitaire: {
         type: Number,
@@ -35,21 +35,27 @@ const productSchema = mongoose.Schema({
     },
     description_img1: {
         type: String,
+        required : true
     },
     description_img2: {
         type: String,
+        required : true
     },
     description_img3: {
         type: String,
+        required : true
     },
     description_img4: {
         type: String,
+        required : false
     },
     description_img5: {
         type: String,
+        required : false
     },
     description_img6: {
         type: String,
+        required : false
     },
     created_at: {
         type: Date,
