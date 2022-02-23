@@ -2,9 +2,21 @@ const cartRepository = require('../repository/repository');
 const Produits = require('../models/Product');
 const Order = require('../models/Order');
 const Stripe = require('stripe');
+const nodemailer = require('nodemailer')
 const { v4: uuidv4 } = require('uuid');
 const { calculateAmount } = require('../utils/manageAmount');
 const stripe = Stripe('sk_test_51JHVCtF05VKCAD6XLDKnfvfTnl4WzXg9vzGG82TuZzaUTrLzJfzCgUTC6z0eBQGsZtwg6DGMRulSJLj3OqYjwuEX0002PVqevl');
+
+
+exports.getAllPaiements = (req, res) => {
+    Order.find((err, data) => {
+        if (!err) {
+            res.status(200).json(data)
+        } else {
+            res.status(400).json({ err: "pas de paiements" })
+        }
+    })
+}
 
 exports.addItemToCart = async (req, res) => {
     const {
@@ -189,7 +201,7 @@ exports.removeItem = async (req, res) => {
     }
 }
 
-exports.confirmPayment = async (req, res) => {
+/*exports.confirmPayment = async (req, res) => {
     const { token, panel } = req.body
     const amount = calculateAmount(panel)
     const session = await stripe.checkout.sessions.create({
@@ -214,6 +226,61 @@ exports.confirmPayment = async (req, res) => {
     res.json({ id: session.id });
 };
 
+*/
+
 exports.confirmPayment = async (req, res) => {
-    res.status(200).json({success : true})
+    const { token, panel } = req.body
+    const somme = (tab) => {
+        const tabId = []
+        if (tab) {
+            for (var i = 0; i < tab.length; i++) {
+                tabId.push(tab[i].productId)
+            }
+            return tabId
+        } else {
+            return []
+        }
+    }
+    const data = {
+        product_id: somme(panel),
+        amount: calculateAmount(panel),
+        author_prenom: token.lastName,
+        author_email: token.email,
+        author_adress: token.address,
+        author_phone: token.phoneNumber
+
+    }
+
+    if (data.product_id && data.amount && data.author_adress && data.author_prenom && data.author_email && data.author_phone) {
+        const paiement = new Order(data)
+        paiement.save()
+            .then(pay => {
+                const mailOptions = {
+                    from: 'tiemanirocket@gmail.com',
+                    to: data.author_email,
+                    subject: "VOUS AVEZ EFFECTUÉ UN PAIEMENT D'ARTICLE SNKRS",
+                    text: " ID :" + pay._id + ". "
+                }
+                const transporteur = nodemailer.createTransport({
+                    service: 'gmail',
+                    auth: {
+                        user: 'tiemanirocket@gmail.com',
+                        pass: 'Masochisme13'
+                    }
+                })
+                transporteur.sendMail(mailOptions, (err, info) => {
+                    if (err) {
+                        console.log(err)
+                    } else {
+                        console.log(info.response)
+                    }
+                })
+                res.status(200).json({ success: true })
+            })
+            .catch(error => console.log(error))
+
+        res.status(200).json({ success: true })
+    } else {
+        console.log('certains attributs ne sont pas valids')
+    }
 };
