@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Gideon+Roman&family=Montserrat:wght@100&display=swap"
+      rel="stylesheet"
+    />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+
+  <body style="margin: 0; padding: 0">
+    <div class="progress" style="height: 5px">
+      <div class="progress-bar bg-danger" style="width: 0%; height: 20px"></div>
+    </div>
+    <div class="">
+      <div class="greetings">
+        <h1
+          style="
+            text-align: center;
+            margin-top: 100px;
+            color: rgb(12, 12, 12);
+            font-family: 'Montserrat', sans-serif;
+          "
+        >
+          BIENVENU SUR LE PORTAIL POUR ADMINS DE <strong>SNKRS</strong>
+        </h1>
+      </div>
+      <div
+        class="form"
+        style="
+          margin-top: 70px;
+          background-color: rgb(243, 243, 243);
+          height: 540px;
+          padding-top: 80px;
+        "
+      >
+        <div
+          class="mb-3"
+          style="
+            width: 40%;
+            margin-left: 30%;
+            margin-right: 30%;
+            min-width: max-content;
+          "
+        >
+          <label
+            for="exampleFormControlInput1"
+            class="form-label"
+            style="color: rgb(78, 74, 74); font-size: 20px"
+            >Email address</label
+          >
+          <input
+            type="email"
+            required
+            class="form-control"
+            value=""
+            name="email"
+            placeholder="name@example.com"
+          />
+        </div>
+        <div
+          class="mb-3"
+          style="
+            width: 40%;
+            margin-left: 30%;
+            margin-right: 30%;
+            min-width: max-content;
+          "
+        >
+          <label
+            for="exampleFormControlInput1"
+            class="form-label"
+            style="color: rgb(78, 74, 74); font-size: 20px"
+            >Password</label
+          >
+          <input
+            type="password"
+            required
+            class="form-control"
+            value=""
+            name="password"
+            placeholder="name@example.com"
+          />
+          <span class="error" style="margin-top: 30px; color: red"></span>
+          <button
+            type="button"
+            name="sub"
+            class="btn btn-danger"
+            style="float: right; margin-top: 30px; font-size: 18px"
+          >
+            Se Connecter
+          </button>
+        </div>
+      </div>
+    </div>
+    <script>
+      const btnSub = document.getElementsByName("sub")[0];
+
+      btnSub.addEventListener("click", (e) => {
+        const email = document.getElementsByName("email")[0].value;
+        const password = document.getElementsByName("password")[0].value;
+        document.getElementsByClassName("error")[0].innerHTML = "";
+        console.log(email, password);
+        if (email && password) {
+          var i = 0;
+          var err = "";
+          var int = setInterval(() => {
+            if (i <= 150) {
+              document.getElementsByClassName("progress-bar")[0].style =
+                "width:" + i + "%;height:20px";
+              i++;
+            } else {
+              clearInterval(int);
+              console.log(err);
+              fetch("/api/adminlogin", {
+                method: "POST",
+                body: JSON.stringify(data),
+                headers: {
+                  "Content-type": "application/json",
+                },
+              })
+                .then((data) => data.json())
+                .then((res) => {
+                  if (res.feedback === true) {
+                    window.location = "http://localhost:4001/";
+                  } else {
+                    document.getElementsByClassName("progress-bar")[0].style =
+                      "width:" + 0 + "%;height:20px;";
+                    console.log(res.feedback);
+                    err = res.feedback;
+                    document.getElementsByClassName("error")[0].innerHTML =
+                      "<span class='error' style='margin-top: 30px; color: red;font-family: 'Montserrat', sans-serif;'>" +
+                      res.feedback +
+                      "</span>";
+                  }
+                })
+                .catch((err) => console.log("erreur"));
+            }
+          }, 25);
+          const data = {
+            email,
+            password,
+          };
+        } else {
+          document.getElementsByClassName("error")[0].innerHTML =
+            "<span class='error' style='margin-top: 30px; color: red;font-family: 'Montserrat', sans-serif;'>Remplissez correctement les champs</span>";
+        }
+      });
+    </script>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
+      integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
+      integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>

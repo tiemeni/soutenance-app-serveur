@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      td {
+        width: 500px;
+        font-size: 20px;
+        text-align: center;
+        height: 50px;
+      }
+      table {
+        border: 1px solid black;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      style="
+        border: 1px solid black;
+        height: 100px;
+        border-bottom-left-radius: 50%;
+        border-bottom-right-radius: 50%;
+        background-color: black;
+      "
+    ></div>
+    <div style="height: 500px; padding-top: 50px">
+      <h1 style="text-align: center">FACTURE CHEZ SNKRS</h1>
+      <div
+        style="
+          margin-left: 20%;
+          margin-right: 20%;
+          width: 60%;
+          margin-top: 100px;
+        "
+      >
+        <table>
+          <tr>
+            <td style="font-weight: bold">ID Paiement</td>
+            <td><%= id %></td>
+          </tr>
+          <tr>
+            <td style="font-weight: bold">Amount</td>
+            <td><%= amount %></td>
+          </tr>
+          <tr>
+            <td style="font-weight: bold">Email</td>
+            <td><%= email %></td>
+          </tr>
+          <tr>
+            <td style="font-weight: bold">Phone</td>
+            <td><%= phone %></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>

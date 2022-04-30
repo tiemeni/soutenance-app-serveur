@@ -1,0 +1,62 @@
+STAN SMITH
+adidas
+chaussure
+ est lune des chaussures les plus iconiques du monde des sneakers
+https://photos6.spartoo.com/photos/218/218474/218474_500_D.jpg
+... est lune des chaussures les plus iconiques du monde des sneakers
+blanche
+15000
+30
+
+ https://photos6.spartoo.com/photos/218/218474/218474_500_A.jpg
+ https://photos6.spartoo.com/photos/218/218474/218474_500_C.jpg
+ https://photos6.spartoo.com/photos/218/218474/218474_500_F.jpg
+
+
+const paiement = new Order(data);
+    paiement
+      .save()
+      .then((pay) => {
+        var transporter = nodemailer.createTransport({
+          service: "gmail",
+          auth: {
+            user: "tiemanirocket@gmail.com",
+            pass: "Masochisme13",
+          },
+        });
+
+        ejs.renderFile(
+          __dirname + "/../" + "/public/modelEmail.ejs",
+          {
+            id: pay._id,
+            amount: data.amount,
+            email: data.author_email,
+            phone: data.author_phone,
+          },
+          (err, data) => {
+            if (err) {
+              console.log(err);
+              res.status(200).json({ success: false });
+            } else {
+              var mainOption = {
+                from: "tiemanirocket@gmail.com",
+                to: data.author_email,
+                subject: "VOUS AVEZ EFFECTUÉ UN PAIEMENT D'ARTICLE SNKRS",
+                html: data,
+              };
+              transporter.sendMail(mainOption, (err, data) => {
+                if (err) {
+                  console.log(err);
+                  res.status(200).json({ success: false });
+                } else {
+                  console.log(data);
+                  res.status(200).json({ success: true });
+                }
+              });
+            }
+          }
+        );
+      })
+      .catch((error) => {
+        res.status(200).json({ success: false });
+      });
